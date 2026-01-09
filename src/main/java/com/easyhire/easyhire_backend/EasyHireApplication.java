@@ -8,6 +8,8 @@ public class EasyHireApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EasyHireApplication.class, args);
+        // this is the application file
+
 	}
 
 }
