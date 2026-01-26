@@ -1,33 +1,13 @@
-package com.easyhire.easyhire_backend.entity;
+package com.easyhire.easyhire_backend.dto.candidate;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "candidates")
-public class Candidate extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long candidateId;
+public class CandidateCreateRequest {
 
     private String name;
-
-    @Column(unique = true)
     private String email;
-
     private String phone;
-
     private String resumeUrl;
 
     // getters & setters
-
-    public Long getCandidateId() {
-        return candidateId;
-    }
-
-    public void setCandidateId(Long candidateId) {
-        this.candidateId = candidateId;
-    }
 
     public String getName() {
         return name;
