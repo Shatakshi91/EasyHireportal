@@ -1,14 +1,11 @@
 package com.easyhire.easyhire_backend.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.easyhire.easyhire_backend.entity.JobApplication;
-
 import com.easyhire.easyhire_backend.entity.Interview;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-
-import java.util.List;
+import java.util.Optional;
 
 public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
-    List<Interview> findByApplication(JobApplication application);
+    Optional<Interview> findByApplication_ApplicationId(Long applicationId);
 }

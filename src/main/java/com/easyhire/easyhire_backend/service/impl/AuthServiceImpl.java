@@ -19,8 +19,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil
-    ) {
+            JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -39,8 +38,31 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getTenantId(),
-                user.getRole().name()
-        );
+                user.getRole().name());
+
+        return new LoginResponse(token);
+    }
+
+    @Override
+    public LoginResponse register(com.easyhire.easyhire_backend.dto.RegisterRequest request) {
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already taken");
+        }
+
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setTenantId(request.getTenantId());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        userRepository.save(user);
+
+        String token = jwtUtil.generateToken(
+                user.getEmail(),
+                user.getTenantId(),
+                user.getRole().name());
 
         return new LoginResponse(token);
     }

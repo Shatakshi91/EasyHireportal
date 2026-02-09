@@ -19,4 +19,9 @@ public class AuthController {
     public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
+
+    @PostMapping("/register")
+    public LoginResponse register(@RequestBody com.easyhire.easyhire_backend.dto.RegisterRequest request) {
+        return authService.register(request);
+    }
 }

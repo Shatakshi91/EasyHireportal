@@ -29,8 +29,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/candidates/**",
-                                "/api/applications/**",// Verify if this should really be public
-                                "/health" // Added health check if you have one
+                                "/api/applications/**",
+                                "/api/interviews/**",// Verify if this should really be public
+                                "/health"// Added health check if you have one
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
