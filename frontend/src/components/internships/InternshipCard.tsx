@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Internship } from "@/types";
 import { getJobTypeBadgeStyle } from "@/utils/status";
-import { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 
 interface InternshipCardProps {
     internship: Internship;
@@ -25,9 +25,10 @@ export function InternshipCard({ internship }: InternshipCardProps) {
     const [resumeUrl, setResumeUrl] = useState("");
 
     const formatStipend = (min?: number, max?: number) => {
-        if (!min && !max) return "Unpaid";
-        if (min && !max) return `₹${min.toLocaleString()}/mo`;
-        return `₹${min?.toLocaleString()} – ₹${max?.toLocaleString()}/mo`;
+        if (min && max) return `INR ${min.toLocaleString()} - INR ${max.toLocaleString()}/mo`;
+        if (min) return `INR ${min.toLocaleString()}/mo`;
+        if (max) return `Up to INR ${max.toLocaleString()}/mo`;
+        return "Unpaid";
     };
 
     const applyMutation = useMutation({
@@ -35,12 +36,16 @@ export function InternshipCard({ internship }: InternshipCardProps) {
             await api.post(`/internships/${internship.id}/apply`, { resumeUrl });
         },
         onSuccess: () => {
-            toast.success("Application submitted successfully! 🎉");
+            toast.success("Application submitted successfully!");
             setOpen(false);
             setResumeUrl("");
         },
-        onError: (error: AxiosError | any) => {
-            toast.error(error.response?.data?.message || "Failed to apply. You may have already applied.");
+        onError: (error: unknown) => {
+            const message = isAxiosError<{ message?: string }>(error)
+                ? error.response?.data?.message
+                : undefined;
+
+            toast.error(message || "Failed to apply. You may have already applied.");
         }
     });
 
