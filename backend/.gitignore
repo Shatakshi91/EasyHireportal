@@ -35,6 +35,7 @@ build/
 ### Secrets & Environment Variables ###
 .env
 .env.*
+!.env.example
 application-prod.yml
 application-dev.yml
 *.log

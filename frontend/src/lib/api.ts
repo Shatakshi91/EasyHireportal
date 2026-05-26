@@ -1,18 +1,16 @@
-// src/lib/api.ts
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
-// Create a configured Axios instance
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+
 export const api = axios.create({
-    baseURL: 'http://localhost:8080/api/v1', // Maps to your Spring Boot backend
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Intercept every request before it leaves the frontend
 api.interceptors.request.use((config) => {
-    // Grab the token directly from our Zustand store
     const token = useAuthStore.getState().token;
 
     if (token) {

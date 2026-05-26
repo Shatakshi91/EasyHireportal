@@ -6,7 +6,7 @@ import { Home } from "@/pages/public/Home";
 import { Login } from "@/pages/auth/Login";
 import { Register } from "@/pages/auth/Register";
 import { CandidateDashboard } from "@/pages/candidate/CandidateDashboard";
-import { RecruiterDashboard } from "./pages/recruiter/RecruiterDashboard";
+import { RecruiterDashboard } from "@/pages/recruiter/RecruiterDashboard";
 import { JobApplicants } from "@/pages/recruiter/JobApplicants";
 import { NotFound } from "@/pages/public/NotFound";
 
@@ -17,19 +17,16 @@ function App() {
         <Navbar />
         <main className="flex-1 flex flex-col">
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* 🔒 Protected Candidate Routes */}
             <Route element={<ProtectedRoute allowedRole="CANDIDATE" />}>
               <Route path="/candidate" element={<CandidateDashboard />} />
               <Route path="/candidate/applications" element={<CandidateDashboard />} />
               <Route path="/candidate/profile" element={<CandidateDashboard />} />
             </Route>
 
-            {/* 🔒 Protected Recruiter Routes */}
             <Route element={<ProtectedRoute allowedRole="RECRUITER" />}>
               <Route path="/recruiter" element={<RecruiterDashboard />} />
               <Route path="/recruiter/new" element={<RecruiterDashboard />} />
@@ -37,7 +34,6 @@ function App() {
               <Route path="/recruiter/internships/:jobId/applicants" element={<JobApplicants />} />
             </Route>
 
-            {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

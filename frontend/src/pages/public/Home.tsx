@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { HeroSection } from "../../components/public/HeroSection";
-import { HowItWorksSection } from "../../components/public/HowItWorksSection";
-import { TestimonialsSection } from "../../components/public/TestimonialsSection";
-import { CTASection } from "../../components/public/CTASection";
-import { HomeFooter } from "../../components/public/HomeFooter";
+import { HeroSection } from "@/components/public/HeroSection";
+import { HowItWorksSection } from "@/components/public/HowItWorksSection";
+import { TestimonialsSection } from "@/components/public/TestimonialsSection";
+import { CTASection } from "@/components/public/CTASection";
+import { HomeFooter } from "@/components/public/HomeFooter";
 
 export type UserRole = 'candidate' | 'recruiter';
 

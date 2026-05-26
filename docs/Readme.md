@@ -106,7 +106,7 @@ The system follows a layered monolithic architecture. For detailed insights, ref
 git clone <repository-url>
 ```
 
-1. Configure database in `application-dev.yml`.
+1. Configure database in `application-dev.yaml`.
 
 2. Set environment variables:
 
