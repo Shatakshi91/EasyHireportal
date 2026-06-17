@@ -4,6 +4,7 @@ import com.easyhire.dto.CreateInternshipRequest;
 import com.easyhire.dto.InternshipResponse;
 import com.easyhire.dto.UpdateInternshipStatusRequest;
 import com.easyhire.entity.*;
+import com.easyhire.exception.BadRequestException;
 import com.easyhire.exception.ResourceNotFoundException;
 import com.easyhire.repository.CompanyRepository;
 import com.easyhire.repository.InternshipRepository;
@@ -21,10 +22,23 @@ import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class InternshipService {
+
+    private static final int MAX_PAGE_SIZE = 100;
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "createdAt",
+            "updatedAt",
+            "title",
+            "location",
+            "stipendMin",
+            "stipendMax",
+            "type",
+            "status"
+    );
 
     private final InternshipRepository internshipRepository;
     private final UserRepository userRepository;
@@ -81,9 +95,11 @@ public class InternshipService {
             String direction
     ) {
 
-        Sort sort = direction.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
+        validateSearchRequest(minStipend, maxStipend, page, size, sortBy, direction);
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -149,6 +165,34 @@ public class InternshipService {
         Internship updated = internshipRepository.save(internship);
 
         return mapToResponse(updated);
+    }
+
+    private void validateSearchRequest(BigDecimal minStipend,
+                                       BigDecimal maxStipend,
+                                       int page,
+                                       int size,
+                                       String sortBy,
+                                       String direction) {
+
+        if (page < 0) {
+            throw new BadRequestException("Page index must be zero or greater");
+        }
+
+        if (size < 1 || size > MAX_PAGE_SIZE) {
+            throw new BadRequestException("Page size must be between 1 and " + MAX_PAGE_SIZE);
+        }
+
+        if (sortBy == null || !ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            throw new BadRequestException("Invalid sort field: " + sortBy);
+        }
+
+        if (direction == null || (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc"))) {
+            throw new BadRequestException("Sort direction must be either asc or desc");
+        }
+
+        if (minStipend != null && maxStipend != null && minStipend.compareTo(maxStipend) > 0) {
+            throw new BadRequestException("Minimum stipend cannot be greater than maximum stipend");
+        }
     }
 
     private InternshipResponse mapToResponse(Internship internship) {

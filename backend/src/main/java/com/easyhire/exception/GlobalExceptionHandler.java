@@ -4,11 +4,13 @@ import com.easyhire.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -79,6 +81,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(400, "Validation Error",
                         message, request.getRequestURI()));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(
+            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+
+        String message = "Invalid value for parameter: " + ex.getName();
+
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(400, "Bad Request",
+                        message, request.getRequestURI()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleUnreadableMessage(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(400, "Bad Request",
+                        "Malformed request body", request.getRequestURI()));
     }
 
     @ExceptionHandler(Exception.class)
