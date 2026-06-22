@@ -61,9 +61,7 @@ public class InternshipService {
         internship.setRecruiter(recruiter);
 
         if (request.getCompanyId() != null) {
-            Company company = companyRepository.findById(request.getCompanyId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Company", request.getCompanyId()));
-            internship.setCompany(company);
+            internship.setCompany(getRecruiterCompany(recruiterId, request.getCompanyId()));
         }
 
         internship.setTitle(request.getTitle());
@@ -160,6 +158,9 @@ public class InternshipService {
         internship.setStipendMin(request.getStipendMin());
         internship.setStipendMax(request.getStipendMax());
         internship.setType(request.getType());
+        if (request.getCompanyId() != null) {
+            internship.setCompany(getRecruiterCompany(recruiterId, request.getCompanyId()));
+        }
         internship.setUpdatedAt(LocalDateTime.now());
 
         Internship updated = internshipRepository.save(internship);
@@ -193,6 +194,17 @@ public class InternshipService {
         if (minStipend != null && maxStipend != null && minStipend.compareTo(maxStipend) > 0) {
             throw new BadRequestException("Minimum stipend cannot be greater than maximum stipend");
         }
+    }
+
+    private Company getRecruiterCompany(UUID recruiterId, UUID companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Company", companyId));
+
+        if (company.getRecruiter() == null || !company.getRecruiter().getId().equals(recruiterId)) {
+            throw new AccessDeniedException("Not your company profile");
+        }
+
+        return company;
     }
 
     private InternshipResponse mapToResponse(Internship internship) {

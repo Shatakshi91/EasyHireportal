@@ -12,12 +12,23 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
     const token = useAuthStore.getState().token;
+    const isAuthEndpoint = config.url?.startsWith('/auth/');
 
-    if (token) {
+    if (token && !isAuthEndpoint) {
         config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
     }
 
     return config;
 }, (error) => {
+    return Promise.reject(error);
+});
+
+api.interceptors.response.use((response) => response, (error) => {
+    if (error.response?.status === 401 && useAuthStore.getState().token) {
+        useAuthStore.getState().logout();
+    }
+
     return Promise.reject(error);
 });

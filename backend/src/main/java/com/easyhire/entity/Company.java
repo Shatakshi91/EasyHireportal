@@ -13,6 +13,10 @@ public class Company {
     @GeneratedValue
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recruiter_id")
+    private User recruiter;
+
     @Column(nullable = false)
     private String name;
 
@@ -40,6 +44,14 @@ public class Company {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public User getRecruiter() {
+        return recruiter;
+    }
+
+    public void setRecruiter(User recruiter) {
+        this.recruiter = recruiter;
     }
 
     public String getName() {

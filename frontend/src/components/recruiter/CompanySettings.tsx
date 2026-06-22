@@ -15,10 +15,13 @@ export function CompanySettings() {
     const queryClient = useQueryClient();
     const form = useForm<Company>();
 
-    const { data: company, isLoading } = useQuery<Company>({
+    const { data: company, isLoading } = useQuery<Company | null>({
         queryKey: ['my-company'],
         queryFn: async () => {
             const response = await api.get('/companies/me');
+            if (response.status === 204) {
+                return null;
+            }
             return response.data;
         }
     });
