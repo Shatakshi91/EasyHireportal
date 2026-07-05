@@ -34,6 +34,22 @@ class InternshipServiceTest {
     }
 
     @Test
+    void searchRejectsNegativeMinStipend() {
+        assertThrows(BadRequestException.class, () ->
+                internshipService.search(null, null, null, null,
+                        BigDecimal.valueOf(-100), BigDecimal.valueOf(1000),
+                        0, 10, "createdAt", "desc"));
+    }
+
+    @Test
+    void searchRejectsNegativeMaxStipend() {
+        assertThrows(BadRequestException.class, () ->
+                internshipService.search(null, null, null, null,
+                        BigDecimal.valueOf(100), BigDecimal.valueOf(-50),
+                        0, 10, "createdAt", "desc"));
+    }
+
+    @Test
     void searchRejectsMissingDirection() {
         assertThrows(BadRequestException.class, () ->
                 internshipService.search(null, null, null, null, null, null,

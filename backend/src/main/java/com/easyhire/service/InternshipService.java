@@ -191,6 +191,14 @@ public class InternshipService {
             throw new BadRequestException("Sort direction must be either asc or desc");
         }
 
+        if (minStipend != null && minStipend.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BadRequestException("Minimum stipend cannot be negative");
+        }
+
+        if (maxStipend != null && maxStipend.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BadRequestException("Maximum stipend cannot be negative");
+        }
+
         if (minStipend != null && maxStipend != null && minStipend.compareTo(maxStipend) > 0) {
             throw new BadRequestException("Minimum stipend cannot be greater than maximum stipend");
         }
